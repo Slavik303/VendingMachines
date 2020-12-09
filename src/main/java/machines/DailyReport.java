@@ -1,0 +1,154 @@
+package machines;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@Entity(name = "DailyReport")
+public class DailyReport {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "generation_time")
+	private Date generationTime;
+	
+	private boolean outOfOrder;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "current_state")
+	private State currState;
+
+	private float temperature;
+	
+	@Enumerated(EnumType.STRING)
+	private ChangeMachineState changeState;
+	
+	private boolean chipCardError;
+	
+	private boolean constactlessCardError;
+	
+	private float sumOfSales;
+	
+	@OneToMany(
+			mappedBy = "report",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true
+	)
+	private List<ProductReport> productsLeft;
+	
+	@OneToMany(
+			mappedBy = "report",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true
+	)
+	private List<Error> errors;
+	
+	public DailyReport() {
+		productsLeft = new ArrayList<ProductReport>();
+		errors = new ArrayList<Error>();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getGenerationTime() {
+		return generationTime;
+	}
+
+	public void setGenerationTime(Date generationTime) {
+		this.generationTime = generationTime;
+	}
+
+	public boolean isOutOfOrder() {
+		return outOfOrder;
+	}
+
+	public void setOutOfOrder(boolean outOfOrder) {
+		this.outOfOrder = outOfOrder;
+	}
+
+	public State getCurrState() {
+		return currState;
+	}
+
+	public void setCurrState(State currState) {
+		this.currState = currState;
+	}
+
+	public float getTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(float temperature) {
+		this.temperature = temperature;
+	}
+
+	public ChangeMachineState getChangeState() {
+		return changeState;
+	}
+
+	public void setChangeState(ChangeMachineState changeState) {
+		this.changeState = changeState;
+	}
+
+	public boolean isChipCardError() {
+		return chipCardError;
+	}
+
+	public void setChipCardError(boolean chipCardError) {
+		this.chipCardError = chipCardError;
+	}
+
+	public boolean isConstactlessCardError() {
+		return constactlessCardError;
+	}
+
+	public void setConstactlessCardError(boolean constactlessCardError) {
+		this.constactlessCardError = constactlessCardError;
+	}
+
+	public float getSumOfSales() {
+		return sumOfSales;
+	}
+
+	public void setSumOfSales(float sumOfSales) {
+		this.sumOfSales = sumOfSales;
+	}
+	
+	public List<ProductReport> getProductsLeft() {
+		return productsLeft;
+	}
+
+	public void setProductsLeft(List<ProductReport> productsLeft) {
+		this.productsLeft = productsLeft;
+	}
+
+	public List<Error> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(List<Error> errors) {
+		this.errors = errors;
+	}
+	
+}

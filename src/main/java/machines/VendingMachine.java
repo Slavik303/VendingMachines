@@ -1,18 +1,60 @@
 package machines;
 
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.NaturalId;
 
+
+@XmlRootElement(name = "VendingMachine")
+@Entity(name = "VendingMachine")
 public class VendingMachine {
 	
-	/* TODO add Type */
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@NaturalId
+	@Column(name = "serial_nb")
 	private String serailNb;
-	private String installationAddr;
+
+	@Enumerated(EnumType.STRING)
+	private ProductType type;
+
+	@Embedded
+	@Column(name = "installation_address")
+	private Address installationAddress;
+	
 	private String location;
-	private String gpsCoords;
+	
+	private float longitude;
+
+	private float latitude;
+	
+	@Column(name = "last_intervention")
+	@Temporal(TemporalType.DATE)
 	private Date lastIntervention;
+	
 	private String notes;
 	
 	public VendingMachine() {
+		installationAddress = new Address();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getSerailNb() {
@@ -23,12 +65,20 @@ public class VendingMachine {
 		this.serailNb = serailNb;
 	}
 
-	public String getInstallationAddr() {
-		return installationAddr;
+	public ProductType getType() {
+		return type;
 	}
 
-	public void setInstallationAddr(String installationAddr) {
-		this.installationAddr = installationAddr;
+	public void setType(ProductType type) {
+		this.type = type;
+	}
+
+	public Address getInstallationAddress() {
+		return installationAddress;
+	}
+
+	public void setInstallationAddress(Address installationAddress) {
+		this.installationAddress = installationAddress;
 	}
 
 	public String getLocation() {
@@ -39,12 +89,20 @@ public class VendingMachine {
 		this.location = location;
 	}
 
-	public String getGpsCoords() {
-		return gpsCoords;
+	public float getLongitude() {
+		return longitude;
 	}
 
-	public void setGpsCoords(String gpsCoords) {
-		this.gpsCoords = gpsCoords;
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
+	}
+
+	public float getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
 	}
 
 	public Date getLastIntervention() {
