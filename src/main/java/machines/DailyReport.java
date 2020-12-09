@@ -1,5 +1,6 @@
 package machines;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,6 +29,7 @@ public class DailyReport {
 	@Column(name = "generation_time")
 	private Date generationTime;
 	
+	@Column(name = "out_of_order")
 	private boolean outOfOrder;
 	
 	@Enumerated(EnumType.STRING)
@@ -36,13 +39,17 @@ public class DailyReport {
 	private float temperature;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "change_machine_state")
 	private ChangeMachineState changeState;
 	
+	@Column(name = "chip_card_error")
 	private boolean chipCardError;
 	
+	@Column(name = "contactless_card_error")
 	private boolean constactlessCardError;
 	
-	private float sumOfSales;
+	@Column(name = "sum_of_sales")
+	private BigDecimal sumOfSales;
 	
 	@OneToMany(
 			mappedBy = "report",
@@ -57,6 +64,9 @@ public class DailyReport {
 			orphanRemoval = true
 	)
 	private List<Error> errors;
+	
+	@OneToOne(mappedBy = "lastReport")
+	private VendingMachine machine;
 	
 	public DailyReport() {
 		productsLeft = new ArrayList<ProductReport>();
@@ -127,11 +137,11 @@ public class DailyReport {
 		this.constactlessCardError = constactlessCardError;
 	}
 
-	public float getSumOfSales() {
+	public BigDecimal getSumOfSales() {
 		return sumOfSales;
 	}
 
-	public void setSumOfSales(float sumOfSales) {
+	public void setSumOfSales(BigDecimal sumOfSales) {
 		this.sumOfSales = sumOfSales;
 	}
 	
@@ -149,6 +159,14 @@ public class DailyReport {
 
 	public void setErrors(List<Error> errors) {
 		this.errors = errors;
+	}
+
+	public VendingMachine getMachine() {
+		return machine;
+	}
+
+	public void setMachine(VendingMachine machine) {
+		this.machine = machine;
 	}
 	
 }

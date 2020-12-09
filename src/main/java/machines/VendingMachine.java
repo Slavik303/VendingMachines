@@ -1,6 +1,8 @@
 package machines;
 
 import java.util.Date;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,6 +10,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -44,6 +48,10 @@ public class VendingMachine {
 	private Date lastIntervention;
 	
 	private String notes;
+
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "last_report_id", referencedColumnName = "id")
+	private DailyReport lastReport;
 	
 	public VendingMachine() {
 		installationAddress = new Address();
@@ -119,6 +127,14 @@ public class VendingMachine {
 
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+
+	public DailyReport getLastReport() {
+		return lastReport;
+	}
+
+	public void setLastReport(DailyReport lastReport) {
+		this.lastReport = lastReport;
 	}
 
 }

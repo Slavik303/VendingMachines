@@ -1,5 +1,7 @@
 package machines;
 
+import java.math.BigDecimal;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,10 +24,16 @@ public class ProductReport {
 
 	private int quantity;
 	
-	private float price;
+	private BigDecimal price;
 	
-	public ProductReport() {
+	private ProductReport() {
 
+	}
+	
+	public ProductReport(DailyReport report, Product product) {
+		this.report = report;
+		this.product = product;
+		id = new ProductReportKey(report.getId(), product.getId());
 	}
 	
 	public ProductReportKey getId() {
@@ -60,11 +68,11 @@ public class ProductReport {
 		this.quantity = quantity;
 	}
 
-	public float getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 	

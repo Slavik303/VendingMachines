@@ -17,7 +17,7 @@ public class Product {
 	
 	@Id
 	@GeneratedValue
-	private int id;
+	private Long id;
 
 	private String name;
 	
@@ -25,7 +25,6 @@ public class Product {
 	private ProductType type;
 	
 	@OneToMany(
-			mappedBy = "product",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true
 	)
@@ -36,11 +35,11 @@ public class Product {
 		reports = new ArrayList<ProductReport>();
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -60,4 +59,12 @@ public class Product {
 		this.type = type;
 	}
 	
+	public List<ProductReport> getReports() {
+		return reports;
+	}
+
+	public void setReports(List<ProductReport> reports) {
+		this.reports = reports;
+	}
+
 }
