@@ -16,9 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity(name = "DailyReport")
+@XmlRootElement(name = "dailyReport")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class DailyReport {
 
 	@Id

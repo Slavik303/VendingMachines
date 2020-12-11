@@ -14,12 +14,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.NaturalId;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@XmlRootElement(name = "VendingMachine")
+
 @Entity(name = "VendingMachine")
+@XmlRootElement(name = "vendingMachine")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class VendingMachine {
 	
 	@Id
@@ -28,7 +33,7 @@ public class VendingMachine {
 
 	@NaturalId
 	@Column(name = "serial_nb")
-	private String serailNb;
+	private String serialNb;
 
 	@Enumerated(EnumType.STRING)
 	private ProductType type;
@@ -65,12 +70,12 @@ public class VendingMachine {
 		this.id = id;
 	}
 
-	public String getSerailNb() {
-		return serailNb;
+	public String getSerialNb() {
+		return serialNb;
 	}
 
-	public void setSerailNb(String serailNb) {
-		this.serailNb = serailNb;
+	public void setSerialNb(String serialNb) {
+		this.serialNb = serialNb;
 	}
 
 	public ProductType getType() {
