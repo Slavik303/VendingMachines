@@ -75,19 +75,43 @@ public class MachineService {
 	}
 	
 	@PUT
-	@Path("/machine/{id:\\d+}")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public void updateMachine(long id, VendingMachine machine) {
-		
-	}
+    @Path("/machine/{id:\\d+}")
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response updateMachine(@PathParam("id") long id, VendingMachine machine) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        if (session.get(VendingMachine.class, id) != null)
+        {
+            machine.setId(id);
+            session.merge(machine);
+            transaction.commit();
+            return Response.ok(machine).build();
+        }
+        else
+        {
+            session.clear();
+            session.close();
+            return Response.notModified().build();
+        }
+    }
 
-	@DELETE
-	@Path("/machine/{id:\\d+}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public void deleteMachine(long id) {
-		
-	}
-	
+    @DELETE
+    @Path("/machine/{id:\\d+}")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response deleteMachine(@PathParam("id") long id) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction transaction = session.beginTransaction();
+        VendingMachine machine = session.byId(VendingMachine.class).load(Long.valueOf(id));
+        try {
+            session.delete(machine);
+            transaction.commit();
+            return Response.ok(machine).build();
+        } catch (Exception e) {
+            transaction.rollback();
+            return Response.notModified().build();
+        }
+    }
+
 	@POST
 	@Path("/report")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
