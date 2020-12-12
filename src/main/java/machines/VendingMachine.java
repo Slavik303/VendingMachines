@@ -19,8 +19,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.NaturalId;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 
 @Entity(name = "VendingMachine")
 @XmlRootElement(name = "vendingMachine")
@@ -60,6 +58,11 @@ public class VendingMachine {
 	
 	public VendingMachine() {
 		installationAddress = new Address();
+	}
+
+	public VendingMachine(String sn) {
+		this();
+		serialNb = sn;
 	}
 
 	public Long getId() {

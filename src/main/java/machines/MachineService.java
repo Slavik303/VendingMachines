@@ -1,6 +1,7 @@
 package machines;
 
 import java.net.URI;
+import java.util.ListIterator;
 
 import javax.jws.WebService;
 import javax.ws.rs.Consumes;
@@ -25,7 +26,22 @@ import util.HibernateUtil;
 public class MachineService {
 
 	public MachineService() { 
-		
+		//TODO delete (test only)
+		Product p1 = new Product();
+		Product p2 = new Product();
+		VendingMachine m3 = new VendingMachine();
+		p1.setName("Café court");
+		p2.setName("Cappuccino");
+		p1.setType(ProductType.HOT_DRINKS);
+		p2.setType(ProductType.HOT_DRINKS);
+		m3.setSerialNb("test");
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction tr = session.beginTransaction();
+		session.save(p1);
+		session.save(p2);
+		session.save(m3);
+		tr.commit();
+		session.close();
 	}
 	
 	@GET
@@ -60,7 +76,7 @@ public class MachineService {
 	
 	@PUT
 	@Path("/machine/{id:\\d+}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public void updateMachine(long id, VendingMachine machine) {
 		
 	}
@@ -70,6 +86,84 @@ public class MachineService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public void deleteMachine(long id) {
 		
+	}
+	
+	@POST
+	@Path("/report")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response addReport(DailyReport report) {
+		// link errors with the report
+		if (report.getErrors() != null) {
+			ListIterator<Error> errorIterator = report.getErrors().listIterator();
+			while(errorIterator.hasNext()) {
+				Error error = errorIterator.next();
+				error.setReport(report);
+			}
+		}
+
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		Transaction transaction = session.beginTransaction();
+		
+		// check if products exist in DB
+		if (report.getProducts() != null) {
+			ListIterator<ProductReport> prIterator = report.getProducts().listIterator();
+			while (prIterator.hasNext()) {
+				ProductReport pr = prIterator.next();
+				if (session.find(Product.class, pr.getId().getProductId()) == null) {
+					session.clear();
+					session.close();
+					return Response.notModified("Product doesn't exist").build();
+				}
+			}
+		}
+
+		// link machine with the report
+		if (report.getMachine() == null) {
+			session.clear();
+			session.close();
+			return Response.notModified("Machine not provided").build();
+		}
+		VendingMachine machine = session.bySimpleNaturalId(VendingMachine.class).load(report.getMachine().getSerialNb());
+		if (machine == null) {
+			session.clear();
+			session.close();
+			return Response.notModified("Machine doesn't exist").build();
+		}
+		machine.setLastReport(report);
+		report.setMachine(machine);
+		session.persist(machine);
+
+		// persist the report to get its id assigned
+		session.persist(report);
+		transaction.commit();
+		session.close();
+
+
+		session = HibernateUtil.getSessionFactory().getCurrentSession();
+		transaction = session.beginTransaction();
+		
+		// set link products with the report (using report's id)
+		ListIterator<ProductReport> prIterator = report.getProducts().listIterator();
+		while (prIterator.hasNext()) {
+			ProductReport pr = prIterator.next();
+			// using report's id
+			pr.getId().setReportId(report.getId());
+			session.save(pr);
+		}
+		transaction.commit();
+		session.close();
+		
+		return Response.ok().build();
+		
+		// TODO move to tests
+		/*
+		session = HibernateUtil.getSessionFactory().getCurrentSession();
+		transaction = session.beginTransaction();
+		ProductReport pr = session.get(ProductReport.class, new ProductReportKey(Long.valueOf(1),Long.valueOf(1)));
+		System.out.println(pr.getProduct().getName());
+		transaction.commit();
+		session.close();
+		*/
 	}
 
 }

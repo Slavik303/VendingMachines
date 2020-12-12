@@ -18,6 +18,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity(name = "DailyReport")
@@ -33,7 +35,7 @@ public class DailyReport {
 	@Column(name = "generation_time")
 	private Date generationTime;
 	
-	@Column(name = "out_of_order")
+	@Column(name = "out_of_order", columnDefinition = "tinyint default false")
 	private boolean outOfOrder;
 	
 	@Enumerated(EnumType.STRING)
@@ -46,34 +48,39 @@ public class DailyReport {
 	@Column(name = "change_machine_state")
 	private ChangeMachineState changeState;
 	
-	@Column(name = "chip_card_error")
+	@Column(name = "chip_card_error", columnDefinition = "tinyint default false")
 	private boolean chipCardError;
 	
-	@Column(name = "contactless_card_error")
-	private boolean constactlessCardError;
+	@Column(name = "contactless_card_error", columnDefinition = "tinyint default false")
+	private boolean contactlessCardError;
 	
 	@Column(name = "sum_of_sales")
 	private BigDecimal sumOfSales;
 	
 	@OneToMany(
 			mappedBy = "report",
-			cascade = CascadeType.ALL,
+			cascade = CascadeType.MERGE,
 			orphanRemoval = true
 	)
-	private List<ProductReport> productsLeft;
+	@XmlElement(name = "product")
+	private List<ProductReport> products;
 	
 	@OneToMany(
 			mappedBy = "report",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true
 	)
+	@XmlElement(name = "error")
 	private List<Error> errors;
 	
-	@OneToOne(mappedBy = "lastReport")
+	@OneToOne(
+			mappedBy = "lastReport",
+			cascade = CascadeType.ALL
+	)
 	private VendingMachine machine;
 	
 	public DailyReport() {
-		productsLeft = new ArrayList<ProductReport>();
+		products = new ArrayList<ProductReport>();
 		errors = new ArrayList<Error>();
 	}
 
@@ -93,7 +100,7 @@ public class DailyReport {
 		this.generationTime = generationTime;
 	}
 
-	public boolean isOutOfOrder() {
+	public boolean getOutOfOrder() {
 		return outOfOrder;
 	}
 
@@ -125,7 +132,7 @@ public class DailyReport {
 		this.changeState = changeState;
 	}
 
-	public boolean isChipCardError() {
+	public boolean getChipCardError() {
 		return chipCardError;
 	}
 
@@ -133,12 +140,12 @@ public class DailyReport {
 		this.chipCardError = chipCardError;
 	}
 
-	public boolean isConstactlessCardError() {
-		return constactlessCardError;
+	public boolean getContactlessCardError() {
+		return contactlessCardError;
 	}
 
-	public void setConstactlessCardError(boolean constactlessCardError) {
-		this.constactlessCardError = constactlessCardError;
+	public void setContactlessCardError(boolean contactlessCardError) {
+		this.contactlessCardError = contactlessCardError;
 	}
 
 	public BigDecimal getSumOfSales() {
@@ -148,13 +155,13 @@ public class DailyReport {
 	public void setSumOfSales(BigDecimal sumOfSales) {
 		this.sumOfSales = sumOfSales;
 	}
-	
-	public List<ProductReport> getProductsLeft() {
-		return productsLeft;
+
+	public List<ProductReport> getProducts() {
+		return products;
 	}
 
-	public void setProductsLeft(List<ProductReport> productsLeft) {
-		this.productsLeft = productsLeft;
+	public void setProducts(List<ProductReport> products) {
+		this.products = products;
 	}
 
 	public List<Error> getErrors() {

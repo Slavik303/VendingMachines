@@ -7,8 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity(name = "ProductReport")
+@XmlRootElement(name = "productReport")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ProductReport {
 	
 	@EmbeddedId
@@ -16,17 +23,19 @@ public class ProductReport {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("report_id")
+	@XmlTransient
 	private DailyReport report;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("product_id")
+	@XmlTransient
 	private Product product;
 
 	private int quantity;
 	
 	private BigDecimal price;
 	
-	private ProductReport() {
+	public ProductReport() {
 
 	}
 	
