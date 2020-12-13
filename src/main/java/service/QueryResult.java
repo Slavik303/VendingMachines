@@ -1,6 +1,12 @@
-package machines;
+package service;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import machines.DailyReport;
+import machines.Error;
+import machines.Product;
+import machines.ProductReport;
+import machines.VendingMachine;
 
 @XmlRootElement(name = "result")
 public class QueryResult {

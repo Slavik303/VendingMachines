@@ -1,10 +1,15 @@
-package machines;
+package service;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import machines.DailyReport;
+import machines.Error;
+import machines.Product;
+import machines.ProductReport;
 
 @XmlRootElement(name = "results")
 public class QueryResults {
@@ -21,12 +26,9 @@ public class QueryResults {
 	}
 	
 	private void unlinkResults() {
-		// TODO delete debug print
-		System.out.println(results.size());
 		ListIterator<QueryResult> iterator = results.listIterator();
 		while (iterator.hasNext()) {
 			QueryResult result = iterator.next();
-			System.out.println(result.getMachine().getSerialNb());
 			result.getMachine().setLastReport(null);
 			DailyReport report = result.getReport();
 			if (report != null) {

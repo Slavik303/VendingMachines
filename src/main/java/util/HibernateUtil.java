@@ -1,7 +1,6 @@
 package util;
 
 import org.hibernate.*;
-import org.hibernate.cfg.*;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
