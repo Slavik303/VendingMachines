@@ -1,7 +1,0 @@
-<beans
-xmlns:mvc="http://www.springframework.org/schema/mvc">
-
-	<mvc:cors>
-		<mvc:mapping path="/**" />
-	</mvc:cors> 
-</beans>
