@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -60,7 +61,8 @@ public class DailyReport {
 	@OneToMany(
 			mappedBy = "report",
 			cascade = CascadeType.MERGE,
-			orphanRemoval = true
+			orphanRemoval = true,
+			fetch = FetchType.LAZY
 	)
 	@XmlElement(name = "product")
 	private List<ProductReport> products;
@@ -68,14 +70,16 @@ public class DailyReport {
 	@OneToMany(
 			mappedBy = "report",
 			cascade = CascadeType.ALL,
-			orphanRemoval = true
+			orphanRemoval = true,
+			fetch = FetchType.LAZY
 	)
 	@XmlElement(name = "error")
 	private List<Error> errors;
 	
 	@OneToOne(
 			mappedBy = "lastReport",
-			cascade = CascadeType.ALL
+			cascade = CascadeType.ALL,
+			fetch = FetchType.LAZY
 	)
 	private VendingMachine machine;
 	

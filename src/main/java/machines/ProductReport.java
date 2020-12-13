@@ -26,7 +26,7 @@ public class ProductReport {
 	@XmlTransient
 	private DailyReport report;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@MapsId("product_id")
 	@XmlTransient
 	private Product product;

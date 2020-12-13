@@ -13,13 +13,24 @@ http://cxf.apache.org/schemas/jaxrs.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
-
-	<jaxrs:server id="machineService" address="/">
+  
+	<jaxrs:server id="machineService" address="/machineservice">
 		<jaxrs:serviceBeans>
 			<bean class="machines.MachineService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+			<ref bean="jacksonProvider" />
 		</jaxrs:providers>
 	</jaxrs:server>
+	
+	<jaxrs:server id="machineService2" address="/dataservice">
+    <jaxrs:serviceBeans>
+			<bean class="machines.DataService" />
+    </jaxrs:serviceBeans>
+    <jaxrs:providers>
+		<ref bean="jacksonProvider" />
+    </jaxrs:providers>
+  </jaxrs:server>
+	
+	<bean id="jacksonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
 </beans>

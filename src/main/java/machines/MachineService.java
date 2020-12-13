@@ -22,26 +22,12 @@ import org.hibernate.Transaction;
 import util.HibernateUtil;
 
 @WebService
-@Path("/machineservice/")
+@Path("/")
 public class MachineService {
 
 	public MachineService() { 
-		//TODO delete (test only)
-		Product p1 = new Product();
-		Product p2 = new Product();
-		VendingMachine m3 = new VendingMachine();
-		p1.setName("Café court");
-		p2.setName("Cappuccino");
-		p1.setType(ProductType.HOT_DRINKS);
-		p2.setType(ProductType.HOT_DRINKS);
-		m3.setSerialNb("test");
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		Transaction tr = session.beginTransaction();
-		session.save(p1);
-		session.save(p2);
-		session.save(m3);
-		tr.commit();
-		session.close();
+		System.out.println("MACHINE SERVICE");
+
 	}
 	
 	@GET
@@ -52,6 +38,7 @@ public class MachineService {
 		Transaction transaction = session.beginTransaction();
 		VendingMachine machine = session.byId(VendingMachine.class).load(Long.valueOf(id));
 		transaction.commit();
+		machine.setLastReport(null);
 		return Response.ok(machine).build();
 	}
 	
@@ -77,6 +64,7 @@ public class MachineService {
 	@PUT
     @Path("/machine/{id:\\d+}")
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response updateMachine(@PathParam("id") long id, VendingMachine machine) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
@@ -85,6 +73,7 @@ public class MachineService {
             machine.setId(id);
             session.merge(machine);
             transaction.commit();
+            machine.setLastReport(null);
             return Response.ok(machine).build();
         }
         else
@@ -105,6 +94,7 @@ public class MachineService {
         try {
             session.delete(machine);
             transaction.commit();
+            machine.setLastReport(null);
             return Response.ok(machine).build();
         } catch (Exception e) {
             transaction.rollback();
