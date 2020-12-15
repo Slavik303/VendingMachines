@@ -68,5 +68,13 @@ public class Product {
 	public void setReports(List<ProductReport> reports) {
 		this.reports = reports;
 	}
+	
+	public Product merge(Product that) {
+		if (that.getName() != null)
+			this.setName(that.getName());
+		if (that.getType() != null)
+			this.setType(that.getType());
+		return this;
+	}
 
 }

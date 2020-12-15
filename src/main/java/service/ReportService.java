@@ -34,7 +34,7 @@ public class ReportService {
 		// link errors with the report
 		if (report.getErrors() != null) {
 			ListIterator<Error> errorIterator = report.getErrors().listIterator();
-			while(errorIterator.hasNext()) {
+			while (errorIterator.hasNext()) {
 				Error error = errorIterator.next();
 				error.setReport(report);
 			}
@@ -59,13 +59,11 @@ public class ReportService {
 		// link machine with the report
 		if (report.getMachine() == null) {
 			session.clear();
-			session.close();
 			return Response.notModified("Machine not provided").build();
 		}
 		VendingMachine machine = session.bySimpleNaturalId(VendingMachine.class).load(report.getMachine().getSerialNb());
 		if (machine == null) {
 			session.clear();
-			session.close();
 			return Response.notModified("Machine doesn't exist").build();
 		}
 		machine.setLastReport(report);
@@ -75,7 +73,6 @@ public class ReportService {
 		// persist the report to get its id assigned
 		session.persist(report);
 		transaction.commit();
-		session.close();
 
 
 		session = HibernateUtil.getSessionFactory().getCurrentSession();

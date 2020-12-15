@@ -41,11 +41,13 @@ public class MachineService {
 		return Response.ok(machine).build();
 	}
 	
-	
 	@POST
 	@Path("/machine/")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response addMachine(VendingMachine machine) {
+		if (machine.getSerialNb() == null) {
+			return Response.notModified().build();
+		}
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		try {
@@ -67,42 +69,25 @@ public class MachineService {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         VendingMachine oldMachine = session.get(VendingMachine.class, id);
-        if (oldMachine != null)
-        {
-            machine = merge(oldMachine, machine);
-            session.save(machine);
-            transaction.commit();
-            session.close();
-            machine.setLastReport(null);
-            return Response.ok(machine).build();
-        }
-        else
-        {
-            session.clear();
-            session.close();
+        transaction.commit();
+        if (oldMachine == null) {
             return Response.notModified().build();
         }
+        oldMachine.merge(machine);
+
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        transaction = session.beginTransaction();
+		try {
+			session.update(oldMachine);
+			transaction.commit();
+		} catch(Exception e) {
+			transaction.rollback();
+            return Response.notModified().build();
+		}
+		oldMachine.setLastReport(null);
+		return Response.ok(oldMachine).build();
     }
 	
-	private VendingMachine merge(VendingMachine oldMachine, VendingMachine newMachine) {
-		if (newMachine.getSerialNb() != null)
-			oldMachine.setSerialNb(newMachine.getSerialNb());
-		if (newMachine.getType() != null)
-			oldMachine.setType(newMachine.getType());
-		if (newMachine.getInstallationAddress() != null)
-			oldMachine.setInstallationAddress(newMachine.getInstallationAddress());
-		if (newMachine.getLocation() != null)
-			oldMachine.setLocation(newMachine.getLocation());
-		if (newMachine.getLongitude() != 0.0)
-			oldMachine.setLongitude(newMachine.getLongitude());
-		if (newMachine.getLatitude() != 0.0)
-			oldMachine.setLatitude(newMachine.getLatitude());
-		if (newMachine.getLastIntervention() != null)
-			oldMachine.setLastIntervention(newMachine.getLastIntervention());
-		if (newMachine.getNotes() != null)
-			oldMachine.setNotes(newMachine.getNotes());
-		return oldMachine;
-	}
 
     @DELETE
     @Path("/machine/{id:\\d+}")
@@ -110,12 +95,12 @@ public class MachineService {
     public Response deleteMachine(@PathParam("id") long id) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        VendingMachine machine = session.byId(VendingMachine.class).load(Long.valueOf(id));
         try {
+        	VendingMachine machine = session.byId(VendingMachine.class).load(Long.valueOf(id));
             session.delete(machine);
             transaction.commit();
-            machine.setLastReport(null);
-            return Response.ok(machine).build();
+			machine.setLastReport(null);
+			return Response.ok(machine).build();
         } catch (Exception e) {
             transaction.rollback();
             return Response.notModified().build();

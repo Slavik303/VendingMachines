@@ -87,11 +87,12 @@ public class DataService {
 			case "ventes":
 				query.multiselect(machineTable, reportJoin).orderBy(builder.desc(reportJoin.get("sumOfSales")));
 				break;
+			default:
+				return Response.noContent().build();
 		}
 		query.where(predicate);
 		List<QueryResult> list = session.createQuery(query).getResultList();
 		transaction.commit();
-		session.close();
 
 		// wrap the list 
 		QueryResults results = new QueryResults(list);

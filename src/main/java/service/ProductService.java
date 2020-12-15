@@ -45,7 +45,7 @@ public class ProductService {
 	@POST
 	@Path("/product/")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response addMachine(Product product) {
+	public Response addProduct(Product product) {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
 		try {
@@ -63,43 +63,37 @@ public class ProductService {
     @Path("/product/{id:\\d+}")
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Response updateMachine(@PathParam("id") long id, Product product) {
+    public Response updateProduct(@PathParam("id") long id, Product product) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Product oldProduct = session.get(Product.class, id);
-        if (oldProduct != null)
-        {
-            product = merge(oldProduct, product);
-            session.save(product);
-            transaction.commit();
-            session.close();
-            product.setReports(null);
-            return Response.ok(product).build();
-        }
-        else
-        {
-            session.clear();
-            session.close();
+        transaction.commit();
+        if (oldProduct == null) {
             return Response.notModified().build();
         }
+        oldProduct.merge(product);
+
+        session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        try {
+            session.update(oldProduct);
+            transaction.commit();
+        } catch(Exception e) {
+        	transaction.rollback();
+        	return Response.notModified().build();
+        }
+        oldProduct.setReports(null);
+        return Response.ok(oldProduct).build();
     }
-	
-	private Product merge(Product oldProduct, Product newProduct) {
-		if (newProduct.getName() != null)
-			oldProduct.setName(newProduct.getName());
-		if (newProduct.getType() != null)
-			oldProduct.setType(newProduct.getType());
-		return oldProduct;
-	}
 
     @DELETE
     @Path("/product/{id:\\d+}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Response deleteMachine(@PathParam("id") long id) {
+    public Response deleteProduct(@PathParam("id") long id) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction transaction = session.beginTransaction();
-        Product product = session.byId(Product.class).load(Long.valueOf(id));
         try {
+        	Product product = session.byId(Product.class).load(Long.valueOf(id));
             session.delete(product);
             transaction.commit();
             product.setReports(null);

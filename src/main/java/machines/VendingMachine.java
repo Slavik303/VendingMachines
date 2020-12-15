@@ -145,4 +145,24 @@ public class VendingMachine {
 		this.lastReport = lastReport;
 	}
 
+	public VendingMachine merge(VendingMachine that) {
+		if (that.getSerialNb() != null)
+			this.setSerialNb(that.getSerialNb());
+		if (that.getType() != null)
+			this.setType(that.getType());
+		if (that.getInstallationAddress() != null)
+			this.setInstallationAddress(that.getInstallationAddress());
+		if (that.getLocation() != null)
+			this.setLocation(that.getLocation());
+		if (that.getLongitude() != 0.0)
+			this.setLongitude(that.getLongitude());
+		if (that.getLatitude() != 0.0)
+			this.setLatitude(that.getLatitude());
+		if (that.getLastIntervention() != null)
+			this.setLastIntervention(that.getLastIntervention());
+		if (that.getNotes() != null)
+			this.setNotes(that.getNotes());
+		return this;
+	}
+
 }
