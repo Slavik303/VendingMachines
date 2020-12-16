@@ -34,7 +34,7 @@ function onClickVentes() {
 		}
 		else
 		{
-			table.append("<h1>Rien à afficher.</h1>");
+			table.append("<h1>Wow, such empty</h1>");
 		}
 	});
 }
@@ -67,7 +67,7 @@ function onClickHorsService() {
 		}	
 		else
 		{
-			table.append("<h1>Rien à afficher.</h1>");
+			table.append("<h1>Wow, such empty</h1>");
 		}
 	});
 }
@@ -90,7 +90,7 @@ function onClickReapprovisionner() {
 					prec = result.machine.id;
 					txt = "<tr><td>"+result.machine.id+"</td>";
 					txt += "<td>"+result.machine.serialNb+"</td>";
-					txt += "<td>"+result.report.temperature+"</td>";
+					txt += "<td>"+result.report.temperatureExt+"°C"+"</td>";
 				}
 				txt += "<td>"+result.product.type+"</td>";
 				txt += "<td>"+result.product.name+"</td>";
@@ -101,7 +101,7 @@ function onClickReapprovisionner() {
 		}
 		else
 		{
-			table.append("<h1>Rien à afficher.</h1>");
+			table.append("<h1>Wow, such empty</h1>");
 		}
 	});
 }
@@ -122,7 +122,7 @@ function onClickSurveiller() {
 					txt = "<tr><td></td><td></td>"
 				} else {
 					prec = result.machine.id;
-					txt = "<tr><td>"+result.machine.id+"</td>";
+					txt = "<tr><td></td><td>"+result.machine.id+"</td>";
 					txt += "<td>"+result.machine.serialNb+"</td>";
 				}
 				txt += "<td>"+result.report.currState+"</td>";
@@ -143,7 +143,7 @@ function onClickSurveiller() {
 		}
 		else
 		{
-			table.append("<h1>Rien à afficher.</h1>");
+			table.append("<h1>Wow, such empty</h1>");
 		}	
 	});
 }

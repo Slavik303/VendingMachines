@@ -1,5 +1,9 @@
 package service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ListIterator;
 
 import javax.jws.WebService;
@@ -18,6 +22,7 @@ import machines.Product;
 import machines.ProductReport;
 import machines.VendingMachine;
 import util.HibernateUtil;
+import org.json.*;
 
 @WebService
 @Path("/")
@@ -31,6 +36,7 @@ public class ReportService {
 	@Path("/report")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response addReport(DailyReport report) {
+		
 		// link errors with the report
 		if (report.getErrors() != null) {
 			ListIterator<Error> errorIterator = report.getErrors().listIterator();
@@ -69,14 +75,35 @@ public class ReportService {
 		machine.setLastReport(report);
 		report.setMachine(machine);
 		session.persist(machine);
-
+		
+		
+		String city = machine.getInstallationAddress().getCity();
+		
+		
 		// persist the report to get its id assigned
 		session.persist(report);
 		transaction.commit();
 
-
+		String link = "http://api.openweathermap.org/data/2.5/weather?q=";
+		link = link + city + "&appid=e7f3095eddadad18036fd4803773eb0d&units=metric";
+		URL url;
+		
+		try {
+			url = new URL(link);
+			URLConnection con = (URLConnection) url.openConnection();
+			JSONObject json_object = new JSONObject(new JSONTokener(con.getInputStream()));
+			json_object = json_object.getJSONObject("main");
+			float temp = json_object.getFloat("temp");
+			report.setTemperatureExt(temp);
+		} 
+		catch (Exception e) {
+			report.setTemperatureExt(-274);
+			e.printStackTrace();
+		}		
+		
 		session = HibernateUtil.getSessionFactory().getCurrentSession();
 		transaction = session.beginTransaction();
+		session.update(report);
 		
 		// set link products with the report (using report's id)
 		ListIterator<ProductReport> prIterator = report.getProducts().listIterator();

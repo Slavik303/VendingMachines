@@ -44,6 +44,8 @@ public class DailyReport {
 
 	private float temperature;
 	
+	private float temperatureExt;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "change_machine_state")
 	private ChangeMachineState changeState;
@@ -181,6 +183,14 @@ public class DailyReport {
 
 	public void setMachine(VendingMachine machine) {
 		this.machine = machine;
+	}
+
+	public float getTemperatureExt() {
+		return temperatureExt;
+	}
+
+	public void setTemperatureExt(float temperatureExt) {
+		this.temperatureExt = temperatureExt;
 	}
 	
 }

@@ -61,14 +61,16 @@ public class DataService {
 				Join<DailyReport,ProductReport> productsJoin = reportJoin.join("products", JoinType.INNER);				
 				Join<ProductReport,Product> productItemsJoin = productsJoin.join("product", JoinType.INNER);
 				query.multiselect(machineTable, reportJoin, productsJoin, productItemsJoin);
+				
 				pred.add(builder.lessThan(productsJoin.get("quantity"), 10));
 				Predicate hotDrinksInsufficient = builder.and(
-						builder.lessThan(reportJoin.get("temperature"), 5),
+						builder.lessThan(reportJoin.get("temperatureExt"), 5),
+						builder.greaterThan(reportJoin.get("temperatureExt"), -274),
 						builder.equal(productItemsJoin.get("type"), ProductType.HOT_DRINKS),
 						builder.lessThan(productsJoin.get("quantity"), 30));
 				pred.add(hotDrinksInsufficient);
 				Predicate coldDrinksInsufficient = builder.and(
-						builder.greaterThan(reportJoin.get("temperature"), 25),
+						builder.greaterThan(reportJoin.get("temperatureExt"), 25),
 						builder.equal(productItemsJoin.get("type"), ProductType.COLD_DRINKS),
 						builder.lessThan(productsJoin.get("quantity"), 30));
 				pred.add(coldDrinksInsufficient);
