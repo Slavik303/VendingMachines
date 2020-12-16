@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.ListIterator;
 
 import javax.jws.WebService;
@@ -39,37 +40,27 @@ public class ReportService {
 		
 		// link errors with the report
 		if (report.getErrors() != null) {
-			ListIterator<Error> errorIterator = report.getErrors().listIterator();
-			while (errorIterator.hasNext()) {
-				Error error = errorIterator.next();
+			for (Error error : report.getErrors()) {
 				error.setReport(report);
 			}
 		}
 
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		Transaction transaction = session.beginTransaction();
-		
-		// check if products exist in DB
-		if (report.getProducts() != null) {
-			ListIterator<ProductReport> prIterator = report.getProducts().listIterator();
-			while (prIterator.hasNext()) {
-				ProductReport pr = prIterator.next();
-				if (session.find(Product.class, pr.getId().getProductId()) == null) {
-					session.clear();
-					session.close();
-					return Response.notModified("Product doesn't exist").build();
-				}
-			}
-		}
 
+		if (productsExist(report.getProducts()) == false) {
+			transaction.rollback();
+			return Response.notModified().build();
+		}
+		
 		// link machine with the report
 		if (report.getMachine() == null) {
-			session.clear();
+			transaction.rollback();
 			return Response.notModified("Machine not provided").build();
 		}
 		VendingMachine machine = session.bySimpleNaturalId(VendingMachine.class).load(report.getMachine().getSerialNb());
 		if (machine == null) {
-			session.clear();
+			transaction.rollback();
 			return Response.notModified("Machine doesn't exist").build();
 		}
 		machine.setLastReport(report);
@@ -80,7 +71,7 @@ public class ReportService {
 		String city = machine.getInstallationAddress().getCity();
 		
 		
-		// persist the report to get its id assigned
+		// persist the report to get an id assigned to it
 		session.persist(report);
 		transaction.commit();
 
@@ -106,17 +97,29 @@ public class ReportService {
 		session.update(report);
 		
 		// set link products with the report (using report's id)
-		ListIterator<ProductReport> prIterator = report.getProducts().listIterator();
-		while (prIterator.hasNext()) {
-			ProductReport pr = prIterator.next();
+		for (ProductReport pr : report.getProducts()) {
 			// using report's id
 			pr.getId().setReportId(report.getId());
 			session.save(pr);
 		}
 		transaction.commit();
-		session.close();
 		
 		return Response.ok().build();
+	}
+	
+	private boolean productsExist(List<ProductReport> products) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		if (products == null) {
+			return true;
+		}
+		ListIterator<ProductReport> prIterator = products.listIterator();
+		while (prIterator.hasNext()) {
+			ProductReport pr = prIterator.next();
+			if (session.find(Product.class, pr.getId().getProductId()) == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
