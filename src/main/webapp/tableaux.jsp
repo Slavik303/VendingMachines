@@ -122,7 +122,7 @@ function onClickSurveiller() {
 					txt = "<tr><td></td><td></td>"
 				} else {
 					prec = result.machine.id;
-					txt = "<tr><td></td><td>"+result.machine.id+"</td>";
+					txt = "<tr><td>"+result.machine.id+"</td>";
 					txt += "<td>"+result.machine.serialNb+"</td>";
 				}
 				txt += "<td>"+result.report.currState+"</td>";
