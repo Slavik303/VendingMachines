@@ -193,4 +193,10 @@ public class DailyReport {
 		this.temperatureExt = temperatureExt;
 	}
 	
+	public void unlink() {
+		machine = null;
+		products = null;
+		errors = null;
+	}
+	
 }

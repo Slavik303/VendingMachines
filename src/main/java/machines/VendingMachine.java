@@ -164,5 +164,9 @@ public class VendingMachine {
 			this.setNotes(that.getNotes());
 		return this;
 	}
+	
+	public void unlink() {
+		lastReport = null;
+	}
 
 }

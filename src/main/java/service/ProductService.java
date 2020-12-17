@@ -37,7 +37,7 @@ public class ProductService {
 		Transaction transaction = session.beginTransaction();
 		Product product = session.byId(Product.class).load(Long.valueOf(id));
 		transaction.commit();
-		product.setReports(null);
+		product.unlink();
 		return Response.ok(product).build();
 	}
 	
@@ -82,7 +82,7 @@ public class ProductService {
         	transaction.rollback();
         	return Response.notModified().build();
         }
-        oldProduct.setReports(null);
+        oldProduct.unlink();
         return Response.ok(oldProduct).build();
     }
 
@@ -96,7 +96,7 @@ public class ProductService {
         	Product product = session.byId(Product.class).load(Long.valueOf(id));
             session.delete(product);
             transaction.commit();
-            product.setReports(null);
+            product.unlink();
             return Response.ok(product).build();
         } catch (Exception e) {
             transaction.rollback();

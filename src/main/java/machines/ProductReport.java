@@ -84,4 +84,9 @@ public class ProductReport {
 		this.price = price;
 	}
 	
+	public void unlink() {
+		report = null;
+		product = null;
+	}
+	
 }

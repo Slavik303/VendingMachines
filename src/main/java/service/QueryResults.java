@@ -29,26 +29,19 @@ public class QueryResults {
 		ListIterator<QueryResult> iterator = results.listIterator();
 		while (iterator.hasNext()) {
 			QueryResult result = iterator.next();
-			result.getMachine().setLastReport(null);
+			result.getMachine().unlink();
 			DailyReport report = result.getReport();
-			if (report != null) {
-				report.setProducts(null);
-				report.setErrors(null);
-				report.setMachine(null);
-			}
+			if (report != null)
+				report.unlink();
 			ProductReport pr = result.getProductReport();
-			if (pr != null) {
-				pr.setProduct(null);
-				pr.setReport(null);
-			}
+			if (pr != null)
+				pr.unlink();
 			Product p = result.getProduct();
-			if (p != null) {
-				p.setReports(null);
-			}
+			if (p != null)
+				p.unlink();
 			Error err = result.getError();
-			if (err != null) {
-				err.setReport(null);
-			}
+			if (err != null)
+				err.unlink();
 		}
 	}
 

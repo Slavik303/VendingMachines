@@ -85,4 +85,8 @@ public class Error {
 		this.report = report;
 	}
 	
+	public void unlink() {
+		report = null;
+	}
+	
 }

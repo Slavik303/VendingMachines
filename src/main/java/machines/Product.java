@@ -76,5 +76,9 @@ public class Product {
 			this.setType(that.getType());
 		return this;
 	}
+	
+	public void unlink() {
+		reports = null;
+	}
 
 }

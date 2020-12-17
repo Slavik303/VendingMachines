@@ -37,7 +37,7 @@ public class MachineService {
 		Transaction transaction = session.beginTransaction();
 		VendingMachine machine = session.byId(VendingMachine.class).load(Long.valueOf(id));
 		transaction.commit();
-		machine.setLastReport(null);
+		machine.unlink();
 		return Response.ok(machine).build();
 	}
 	
@@ -84,7 +84,7 @@ public class MachineService {
 			transaction.rollback();
             return Response.notModified().build();
 		}
-		oldMachine.setLastReport(null);
+		oldMachine.unlink();
 		return Response.ok(oldMachine).build();
     }
 	
@@ -99,7 +99,7 @@ public class MachineService {
         	VendingMachine machine = session.byId(VendingMachine.class).load(Long.valueOf(id));
             session.delete(machine);
             transaction.commit();
-			machine.setLastReport(null);
+			machine.unlink();
 			return Response.ok(machine).build();
         } catch (Exception e) {
             transaction.rollback();
